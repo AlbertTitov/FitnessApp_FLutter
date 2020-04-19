@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mi_card/domain/workout.dart';
+import 'package:fitness_app/domain/workout.dart';
 
 class HomePage extends StatelessWidget {
   @override

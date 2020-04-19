@@ -120,12 +120,12 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
       body: Column(
         children: <Widget>[
           _logo(),
-          SizedBox(height: 60,),
+          /*SizedBox(height: 60,),*/
           (showLogin ? Column(
             children: <Widget>[
               _form('LOGIN', _buttonAction),
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(14),
                 child: GestureDetector(
                   child: Text('Not registered yet? Register please :)', style: TextStyle(fontSize: 20, color: Colors.white),),
                   onTap: () {
@@ -140,7 +140,7 @@ class _AuthorizationPageState extends State<AuthorizationPage> {
             children: <Widget>[
               _form('REGISTER', _buttonAction),
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(14),
                 child: GestureDetector(
                   child: Text('Already registered? Login!', style: TextStyle(fontSize: 20, color: Colors.white),),
                   onTap: () {
