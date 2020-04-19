@@ -1,3 +1,4 @@
+import 'package:fitness_app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_app/domain/workout.dart';
 
@@ -6,11 +7,24 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         child: Scaffold(
-          backgroundColor: Color.fromRGBO(50, 65, 80, 0.5),
-          appBar: AppBar(
-              title: Text('FitnessApp'), leading: Icon(Icons.fitness_center)),
-          body: WorkoutsList(),
-        ));
+      backgroundColor: Color.fromRGBO(50, 65, 80, 0.5),
+      appBar: AppBar(
+        title: Text('FitnessApp'),
+        leading: Icon(Icons.fitness_center),
+        actions: <Widget>[
+          FlatButton.icon(
+              onPressed: () {
+                AuthService().logOut();
+              },
+              icon: Icon(
+                Icons.supervised_user_circle,
+                color: Colors.white,
+              ),
+              label: SizedBox.shrink())
+        ],
+      ),
+      body: WorkoutsList(),
+    ));
   }
 }
 
@@ -52,21 +66,6 @@ class WorkoutsList extends StatelessWidget {
         description: 'Very cool place to go to',
         level: 'The highest'),
     Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'Medium'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'The highest'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'The highest'),
-    Workout(
         title: 'IronGym',
         author: 'Jean Claude Van Damm',
         description: 'Not so cool place to go',
@@ -84,7 +83,7 @@ class WorkoutsList extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Container(
                 decoration:
-                BoxDecoration(color: Color.fromRGBO(50, 65, 85, 0.8)),
+                    BoxDecoration(color: Color.fromRGBO(50, 65, 85, 0.8)),
                 child: ListTile(
                   leading: Container(
                     padding: EdgeInsets.only(right: 6),
@@ -96,7 +95,7 @@ class WorkoutsList extends StatelessWidget {
                     ),
                   ),
                   contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   title: Text(
                     workouts[i].title,
                     style: TextStyle(
@@ -145,8 +144,7 @@ Widget subtitle(BuildContext context, Workout workout) {
       Expanded(
           flex: 3,
           child: Text(workout.level,
-              style:
-              TextStyle(color: Theme.of(context).textTheme.title.color)))
+              style: TextStyle(color: Theme.of(context).textTheme.title.color)))
     ],
   );
 }
