@@ -28,6 +28,8 @@ dependencies:
   provider: ^4.0.5
   # Toast
   fluttertoast: ^4.0.1
+  # Curved navigation bar
+  curved_navigation_bar: ^0.3.2
 
 dev_dependencies:
   flutter_test:
