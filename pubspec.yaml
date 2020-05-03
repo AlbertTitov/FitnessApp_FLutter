@@ -10,7 +10,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -30,6 +30,8 @@ dependencies:
   fluttertoast: ^4.0.1
   # Curved navigation bar
   curved_navigation_bar: ^0.3.2
+  # Flutter form builder
+  flutter_form_builder: ^3.8.3
 
 dev_dependencies:
   flutter_test:
