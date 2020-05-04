@@ -1,5 +1,8 @@
+import 'package:fitness_app/domain/user.dart';
+import 'package:fitness_app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_app/domain/workout.dart';
+import 'package:provider/provider.dart';
 
 class WorkoutsList extends StatefulWidget {
 
@@ -9,54 +12,16 @@ class WorkoutsList extends StatefulWidget {
 
 class _WorkoutsListState extends State<WorkoutsList> {
 
+  User user;
+  DatabaseService db = DatabaseService();
+
   @override
   void initState() {
-    clearFilter();
+    filter(clear: true);
     super.initState();
   }
 
-  final workouts = <Workout>[
-    Workout(
-        title: 'GoldGym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'The highest'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'Medium'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'Begiiner'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'Medium'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'The highest'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'Begiiner'),
-    Workout(
-        title: 'The Middle Earth Gym',
-        author: 'Arnold Swarchenegger',
-        description: 'Very cool place to go to',
-        level: 'The highest'),
-    Workout(
-        title: 'IronGym',
-        author: 'Jean Claude Van Damm',
-        description: 'Not so cool place to go',
-        level: 'Begiiner')
-  ];
+  var workouts = List<Workout>();
 
   var filterOnlyMyWorkouts = false;
   var filterTitle = '';
@@ -66,36 +31,45 @@ class _WorkoutsListState extends State<WorkoutsList> {
   var filterText = '';
   var filterHeight = 0.0;
 
-  List<Workout> filter() {
+  void filter({ bool clear = false }) {
+
+    if (clear) {
+      filterOnlyMyWorkouts = false;
+      filterTitle = '';
+      filterLevel = 'Any level';
+      filterTitleController.clear();
+    }
+
     setState(() {
       filterText = filterOnlyMyWorkouts ? 'My workouts' : 'All workouts';
       filterText += '/' + filterLevel;
       if (filterTitle.isNotEmpty) {
         filterText += '/' + filterTitle;
-        filterHeight = 0;
       }
-    });
-
-    var list = workouts;
-    return list;
-  }
-
-  List<Workout> clearFilter() {
-    setState(() {
-      filterText = 'All workouts/Any level';
-      filterOnlyMyWorkouts = false;
-      filterTitle = '';
-      filterLevel = 'Any level';
-      filterTitleController.clear();
       filterHeight = 0;
     });
 
-    var list = workouts;
-    return list;
+    loadData();
+  }
+
+  loadData() async {
+    var stream = db.getWorkouts(
+      author: filterOnlyMyWorkouts ? user.id : null,
+      level: filterLevel != 'Any level' ? filterLevel : null
+    );
+    
+    stream.listen((List<Workout> data) {
+      setState(() {
+        workouts = data;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+
+    user = Provider.of<User>(context);
+
     var workoutsList = Expanded(
       child: ListView.builder(
           itemCount: workouts.length,
@@ -150,7 +124,7 @@ class _WorkoutsListState extends State<WorkoutsList> {
         ),
         onPressed: () {
           setState(() {
-            filterHeight = (filterHeight == 0.0 ? 280.0 : 0.0);
+            filterHeight = (filterHeight == 0.0 ? 226.0 : 0.0);
           });
         },
       ),
@@ -185,10 +159,13 @@ class _WorkoutsListState extends State<WorkoutsList> {
                 value: filterLevel,
                 onChanged: (String val) => setState(() => filterLevel = val),
               ),
-              TextFormField(
+              /*TextFormField(
                 controller: filterTitleController,
                 decoration: const InputDecoration(labelText: 'Title'),
                 onChanged: (String val) => setState(() => filterTitle = val),
+              ),*/
+              SizedBox(
+                height: 10,
               ),
               Row(
                 children: <Widget>[
@@ -209,7 +186,7 @@ class _WorkoutsListState extends State<WorkoutsList> {
                     flex: 1,
                     child: RaisedButton(
                       onPressed: () {
-                        clearFilter();
+                        filter(clear: true);
                       },
                       child: Text("Clear", style: TextStyle(color: Colors.white)),
                       color: Colors.red,
@@ -239,15 +216,15 @@ class _WorkoutsListState extends State<WorkoutsList> {
     var color = Colors.grey;
     double indicatorLevel = 0;
     switch (workout.level) {
-      case 'Begiiner':
+      case 'Beginner':
         color = Colors.green;
         indicatorLevel = 0.33;
         break;
-      case 'Medium':
+      case 'Intermediate':
         color = Colors.amber;
         indicatorLevel = 0.66;
         break;
-      case 'The highest':
+      case 'Advanced':
         color = Colors.deepOrange;
         indicatorLevel = 1;
         break;

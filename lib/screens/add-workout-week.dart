@@ -37,7 +37,7 @@ class _AddWorkoutWeekState extends State<AddWorkoutWeek> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MaxFit // Create Week Plan'),
+        title: Text('FitnessApp // Create Week Plan'),
         actions: <Widget>[
           SaveButton(
             onPressed: () {

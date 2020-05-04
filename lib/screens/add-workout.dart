@@ -1,9 +1,12 @@
 import 'package:fitness_app/components/common/save-button.dart';
 import 'package:fitness_app/components/common/toast.dart';
 import 'package:fitness_app/core/constants.dart';
+import 'package:fitness_app/domain/user.dart';
 import 'package:fitness_app/domain/workout.dart';
+import 'package:fitness_app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:provider/provider.dart';
 import 'add-workout-week.dart';
 
 class AddWorkout extends StatefulWidget {
@@ -17,17 +20,19 @@ class AddWorkout extends StatefulWidget {
 
 class _AddWorkoutState extends State<AddWorkout> {
   final _fbKey = GlobalKey<FormBuilderState>();
-
+  User user;
   WorkoutSchedule workout = WorkoutSchedule(weeks: []);
 
   @override
   void initState() {
     if (widget.workoutSchedule != null) workout = widget.workoutSchedule.copy();
 
+    if (workout.level == null) { workout.level = 'Beginner'; }
+
     super.initState();
   }
 
-  void _saveWorkout() {
+  void _saveWorkout() async {
     if (_fbKey.currentState.saveAndValidate()) {
       if(workout.weeks == null || workout.weeks.length == 0)
       {
@@ -35,7 +40,13 @@ class _AddWorkoutState extends State<AddWorkout> {
         return;
       }
 
-      Navigator.of(context).pop(workout);
+      if (workout.uid == null) {
+        workout.author = user.id;
+      }
+      await DatabaseService().addOrUpdateWorkout(workout);
+
+      Navigator.of(context).pop();
+
     } else {
       buildToast('Ooops! Something is not right');
     }
@@ -43,9 +54,11 @@ class _AddWorkoutState extends State<AddWorkout> {
 
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<User>(context);
+
     return Scaffold(
         appBar: AppBar(
-          title: Text('MaxFit // Create Workout'),
+          title: Text('FitnessApp // Create Workout'),
           actions: <Widget>[
             SaveButton(onPressed: _saveWorkout)
           ],
@@ -68,7 +81,9 @@ class _AddWorkoutState extends State<AddWorkout> {
                       decoration: InputDecoration(
                         labelText: "Title*",
                       ),
-                      onChanged: (dynamic val) {},
+                      onChanged: (dynamic val) {
+                        workout.title = val;
+                      },
                       validators: [
                         FormBuilderValidators.required(),
                         FormBuilderValidators.maxLength(100),
@@ -82,6 +97,11 @@ class _AddWorkoutState extends State<AddWorkout> {
                       initialValue: 'Beginner',
                       allowClear: false,
                       hint: Text('Select Level'),
+                      onChanged: (dynamic val) {
+                        setState(() {
+                          workout.level = val;
+                        });
+                      },
                       validators: [FormBuilderValidators.required()],
                       items: <String>['Beginner', 'Intermediate', 'Advanced']
                           .map((level) => DropdownMenuItem(
@@ -90,31 +110,48 @@ class _AddWorkoutState extends State<AddWorkout> {
                       ))
                           .toList(),
                     ),
+                    FormBuilderTextField(
+                      attribute: "description",
+                      decoration: InputDecoration(
+                        labelText: "Description*",
+                      ),
+                      onChanged: (dynamic val) {
+                        setState(() {
+                          workout.description = val;
+                        });
+                      },
+                      validators: [
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.maxLength(500),
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'Weeks',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        FlatButton(
+                          child: Icon(Icons.add),
+                          onPressed: () async {
+                            var week = await Navigator.push<WorkoutWeek>(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => AddWorkoutWeek()));
+                            if (week != null)
+                              setState(() {
+                                workout.weeks.add(week);
+                              });
+                          },
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Weeks',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  FlatButton(
-                    child: Icon(Icons.add),
-                    onPressed: () async {
-                      var week = await Navigator.push<WorkoutWeek>(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => AddWorkoutWeek()));
-                      if (week != null)
-                        setState(() {
-                          workout.weeks.add(week);
-                        });
-                    },
-                  )
-                ],
-              ),
+
               workout.weeks.length <= 0
                   ? Text(
                 'Please add at least one training week',
