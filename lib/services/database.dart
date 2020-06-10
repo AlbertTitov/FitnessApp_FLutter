@@ -30,7 +30,12 @@ class DatabaseService {
     }
 
     return query.snapshots().map((QuerySnapshot data) =>
-      data.documents.map((DocumentSnapshot document) => Workout.fromJson(document.documentID, document.data)).toList()
+      data.documents.map((DocumentSnapshot document) => Workout.fromJson(document.data, id: document.documentID )).toList()
     );
+  }
+
+  Future<WorkoutSchedule> getWorkout(String id) async {
+    var document = await _workoutSchedulesCollection.document(id).get();
+    return WorkoutSchedule.fromJson(document.documentID, document.data);
   }
 }

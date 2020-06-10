@@ -27,7 +27,7 @@ class _AddWorkoutDayState extends State<AddWorkoutDay> {
       day = widget.day.copy();
     }
     if (day.drillBlocks == null || day.drillBlocks.length == 0) {
-      day.drillBlocks = [WorkoutSingleDrillBlock(WorkoutDrill())];
+      day.drillBlocks = [WorkoutSingleDrillBlock(drill: WorkoutDrill())];
     }
     super.initState();
   }
@@ -51,10 +51,10 @@ class _AddWorkoutDayState extends State<AddWorkoutDay> {
 
     switch(_defaultNewDrillType) {
       case 'Single drill':
-        newBlock = WorkoutSingleDrillBlock(WorkoutDrill());
+        newBlock = WorkoutSingleDrillBlock(drill: WorkoutDrill());
         break;
       case 'Mutliset drill':
-        newBlock = WorkoutMultisetDrillBlock([WorkoutDrill(), WorkoutDrill()]);
+        newBlock = WorkoutMultisetDrillBlock(drills: [WorkoutDrill(), WorkoutDrill()]);
         break;
       case 'For Time':
         newBlock =

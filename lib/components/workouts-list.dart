@@ -1,7 +1,9 @@
 import 'package:fitness_app/domain/user.dart';
 import 'package:fitness_app/services/database.dart';
-import 'package:flutter/material.dart';
+import 'package:fitness_app/components/common/workout-level.dart';
 import 'package:fitness_app/domain/workout.dart';
+import 'package:flutter/material.dart';
+import 'package:fitness_app/screens/workout-details.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutsList extends StatefulWidget {
@@ -74,33 +76,38 @@ class _WorkoutsListState extends State<WorkoutsList> {
       child: ListView.builder(
           itemCount: workouts.length,
           itemBuilder: (context, i) {
-            return Card(
-              elevation: 2,
-              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Container(
-                decoration:
-                BoxDecoration(color: Color.fromRGBO(50, 65, 85, 0.8)),
-                child: ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.only(right: 6),
-                    child: Icon(Icons.adb,
-                        color: Theme.of(context).textTheme.title.color),
-                    decoration: BoxDecoration(
-                      border: Border(
-                          right: BorderSide(width: 1, color: Colors.white24)),
+            return InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => WorkoutDetails(id:workouts[i].id)));
+              },
+              child: Card(
+                elevation: 2,
+                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Container(
+                  decoration:
+                  BoxDecoration(color: Color.fromRGBO(50, 65, 85, 0.8)),
+                  child: ListTile(
+                    leading: Container(
+                      padding: EdgeInsets.only(right: 6),
+                      child: Icon(Icons.adb,
+                          color: Theme.of(context).textTheme.title.color),
+                      decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(width: 1, color: Colors.white24)),
+                      ),
                     ),
+                    contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                    title: Text(
+                      workouts[i].title,
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.title.color,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    trailing: Icon(Icons.keyboard_arrow_right,
+                        color: Theme.of(context).textTheme.title.color),
+                    subtitle: WorkoutLevel(level: workouts[i].level),
                   ),
-                  contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                  title: Text(
-                    workouts[i].title,
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.title.color,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  trailing: Icon(Icons.keyboard_arrow_right,
-                      color: Theme.of(context).textTheme.title.color),
-                  subtitle: subtitle(context, workouts[i]),
                 ),
               ),
             );

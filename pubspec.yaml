@@ -24,7 +24,7 @@ dependencies:
   firebase_auth: ^0.16.0
   # Firestore
   cloud_firestore: ^0.13.5
-  # Provider
+  # ProviderF
   provider: ^4.0.5
   # Toast
   fluttertoast: ^4.0.1
@@ -32,6 +32,10 @@ dependencies:
   curved_navigation_bar: ^0.3.2
   # Flutter form builder
   flutter_form_builder: ^3.8.3
+  #Expansion_tile_card
+  expansion_tile_card: ^1.0.3
+  #Flutter_chips_input
+  #flutter_chips_input: 1.9.0-dev.1
 
 dev_dependencies:
   flutter_test:
@@ -50,8 +54,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #  - images/a_dot_burr.jpeg
+  assets:
+    - assets/images/gym.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
